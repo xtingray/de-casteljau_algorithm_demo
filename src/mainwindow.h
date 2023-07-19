@@ -14,20 +14,23 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    public:
+        explicit MainWindow(QWidget *parent = nullptr);
+        ~MainWindow();
 
-signals:
-    void progressChanged(qreal progress);
+    signals:
+        void progressChanged(qreal progress);
 
-private:
-    void readSettings();
-    void setupConnections();
-    QIcon getIconForColor(const QColor& color, const QSize& size) const;
+    private slots:
+        void updatePos(QPoint point);
 
-    Ui::MainWindow *ui;
-    Animation *m_animation;
-    PointModel* m_pointModel;
+    private:
+        void readSettings();
+        void setupConnections();
+        QIcon getIconForColor(const QColor& color, const QSize& size) const;
+
+        Ui::MainWindow *ui;
+        Animation *m_animation;
+        PointModel* m_pointModel;
 };
 

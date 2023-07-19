@@ -2,8 +2,7 @@
 
 #include <QDebug>
 
-PointModel::PointModel(QObject* parent)
-    : QAbstractListModel(parent)
+PointModel::PointModel(QObject* parent) : QAbstractListModel(parent)
 {
 }
 
@@ -19,7 +18,8 @@ QVariant PointModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     const QPointF p = m_points.at(index.row());
-    return tr("(%1,%2)").arg(p.x()).arg(p.y());
+
+    return tr("(%1, %2)").arg(p.x()).arg(p.y());
 }
 
 QVariant PointModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -28,9 +28,7 @@ QVariant PointModel::headerData(int section, Qt::Orientation orientation, int ro
         return QVariant();
 
     return tr("Points");
-
 }
-
 
 void PointModel::appendPoint(QPointF point)
 {
@@ -61,9 +59,9 @@ void PointModel::clear()
 bool PointModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     beginRemoveRows(parent, row, row + (count - 1));
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i)
         m_points.removeAt(row);
-    }
+
     endRemoveRows();
 
     return true;

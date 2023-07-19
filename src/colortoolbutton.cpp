@@ -3,8 +3,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 
-ColorToolButton::ColorToolButton(QWidget* parent)
-    : QToolButton(parent)
+ColorToolButton::ColorToolButton(QWidget* parent) : QToolButton(parent)
 {
     setColor(Qt::darkGray);
 }
@@ -21,6 +20,7 @@ QIcon ColorToolButton::getIconForColor(const QColor &color, const QSize& size) c
 {
     QPixmap px(size);
     px.fill(color);
+
     return QIcon(px);
 }
 
@@ -42,5 +42,3 @@ void ColorToolButton::paintEvent(QPaintEvent *event)
     r.moveCenter(cr.center());
     painter.drawRoundedRect(r, 2, 2);
 }
-
-

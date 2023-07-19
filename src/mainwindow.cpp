@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-
     ui->casteljauWidget->setPointModel(m_pointModel);
     ui->pointView->setModel(m_pointModel);
 
@@ -64,10 +63,14 @@ void MainWindow::setupConnections()
         qreal progress = (qreal) ui->progressSlider->value() / ui->progressSlider->maximum();
         emit progressChanged(progress);
     });
+
     connect(this, &MainWindow::progressChanged, ui->casteljauWidget, &CasteljauCanvas::updateProgress);
     connect(ui->action_Quit, &QAction::triggered, this, &MainWindow::close);
     connect(ui->actionClear, &QAction::triggered, ui->casteljauWidget, &CasteljauCanvas::clear);
     connect(ui->casteljauWidget, &CasteljauCanvas::pointAdded, m_pointModel, &PointModel::appendPoint);
+
+    connect(ui->casteljauWidget, &CasteljauCanvas::posChanged, this, &MainWindow::updatePos);
+
     connect(m_animation, &Animation::finished, [=]() {
         ui->progressSlider->setEnabled(true);
     });
@@ -97,17 +100,18 @@ void MainWindow::setupConnections()
     connect(ui->animationResolutionSpinBox, qOverload<double>(&QDoubleSpinBox::valueChanged), [settings](double value) { settings->setValue("animationResolution", value); });
     connect(ui->animationDurationSpinBox, qOverload<int>(&QSpinBox::valueChanged), [settings](int value) { settings->setValue("animationDuration", value); });
 
-
     QSignalMapper *signalMapper = new QSignalMapper(this);
     QMap<ColorToolButton*, QString> btnKeyMap = {
         { ui->bezierCurveColorBtn, "bezierCurvePenColor" },
         { ui->pointsColorBtn, "pointColor" },
         { ui->pointsFillBtn, "pointFill" }
     };
+
     for (auto btn: btnKeyMap.keys()) {
         connect(btn, &ColorToolButton::clicked, signalMapper, qOverload<>(&QSignalMapper::map));
         signalMapper->setMapping(btn, btnKeyMap.value(btn));
     }
+
     connect(signalMapper, qOverload<const QString&>(&QSignalMapper::mappedString), [this, settings, btnKeyMap](const QString& configKey){
         const QColor initialColor = settings->value(configKey, QColor(Qt::white)).value<QColor>();
         const QColor selectedColor = QColorDialog::getColor(initialColor, this, tr("Select Color"));
@@ -119,3 +123,8 @@ void MainWindow::setupConnections()
     });
 }
 
+void MainWindow::updatePos(QPoint point)
+{
+    QString text = "Pos: " + QString::number(point.x()) + "," + QString::number(point.y());
+    ui->posLabel->setText(text);
+}
